@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║   PULSE OF THE NATION — نبض الهوية                                  ║
+  ║   A Tribute to UAE Frontline Heroes                                  ║
+  ║   Version: 2.0.0 | UAE National Rebrand · March 2026 Update         ║
+  ║   Stack: HTML5 · Tailwind CSS CDN · GSAP · Lucide Icons · Cairo     ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en" dir="ltr" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Pulse of The Nation — A prestige tribute portal honouring UAE Frontline Heroes and celebrating national identity." />
+  <title>Pulse of The Nation — نبض الهوية</title>
+
+  <!-- ── Google Fonts ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- ── Tailwind CSS ── -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ── GSAP + ScrollTrigger ── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- ── Lucide Icons ── -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <script>
+    /* ── Tailwind Config — UAE National Palette ── */
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'uae-green': {
+              50:  '#E6F5EC',
+              100: '#C3E8D0',
+              200: '#8FD3A8',
+              300: '#4DBE7C',
+              400: '#00A84A',
+              DEFAULT: '#009739',
+              600: '#007A2E',
+              700: '#006124',
+              800: '#004A1A',
+              900: '#003310',
+            },
+            'uae-red': {
+              50:  '#FEE8EA',
+              100: '#FCCCD0',
+              200: '#F89AA0',
+              300: '#F46870',
+              400: '#F24550',
+              DEFAULT: '#EF3340',
+              600: '#CC1520',
+              700: '#A80F18',
+              800: '#830B12',
+              900: '#5E070D',
+            },
+            'uae-black': '#000000',
+            'uae-gray':  '#F5F5F5',
+          },
+          fontFamily: {
+            en: ['Inter', 'sans-serif'],
+            ar: ['Cairo', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       ROOT & RESET — UAE National Palette
+    ═══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --c-bg:          #FFFFFF;
+      --c-surface:     #F5F5F5;
+      --c-green:       #009739;
+      --c-green-light: #00C04B;
+      --c-green-dim:   #007A2E;
+      --c-green-glow:  rgba(0,151,57,0.12);
+      --c-red:         #EF3340;
+      --c-red-light:   #FF5560;
+      --c-red-dim:     #CC1520;
+      --c-red-glow:    rgba(239,51,64,0.10);
+      --c-black:       #000000;
+      --c-white:       #FFFFFF;
+      --c-text:        #0A0A0A;
+      --c-muted:       rgba(10,10,10,0.52);
+      --c-border:      rgba(0,0,0,0.10);
+      --c-glass-bg:    rgba(255,255,255,0.88);
+      --font-en:       'Inter', sans-serif;
+      --font-ar:       'Cairo', sans-serif;
+      --transition:    0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--c-bg);
+      color: var(--c-text);
+      font-family: var(--font-en);
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    /* Arabic mode */
+    html[dir="rtl"] body { font-family: var(--font-ar); }
+    html[dir="rtl"] .ltr-only { display: none !important; }
+    html[dir="ltr"]  .rtl-only { display: none !important; }
+
+    /* ── Scrollbar — UAE Green ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--c-surface); }
+    ::-webkit-scrollbar-thumb { background: var(--c-green-dim); border-radius: 2px; }
+
+    /* ═══════════════════════════════════════════════
+       CANVAS BACKGROUND — subtle UAE constellation
+    ═══════════════════════════════════════════════ */
+    #constellation-canvas {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none; opacity: 0.35;
+    }
+
+    /* ═══════════════════════════════════════════════
+       NAVIGATION — White Glassmorphism
+    ═══════════════════════════════════════════════ */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.25rem 2.5rem;
+      transition: background var(--transition), backdrop-filter var(--transition), padding var(--transition);
+    }
+    #navbar.scrolled {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 0.875rem 2.5rem;
+      border-bottom: 2px solid transparent;
+      border-image: linear-gradient(90deg, var(--c-green), var(--c-red)) 1;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.07);
+    }
+
+    .nav-logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--c-green) 0%, var(--c-green-dim) 100%);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .nav-link {
+      position: relative; color: var(--c-muted);
+      font-size: 0.8125rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      transition: color var(--transition);
+      text-decoration: none;
+    }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -4px;
+      left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--c-green), var(--c-red));
+      transform: scaleX(0); transform-origin: center;
+      transition: transform var(--transition);
+    }
+    .nav-link:hover { color: var(--c-black); }
+    .nav-link:hover::after { transform: scaleX(1); }
+
+    /* Language toggle */
+    .lang-toggle {
+      display: flex; align-items: center; gap: 0.375rem;
+      background: rgba(0,151,57,0.08);
+      border: 1px solid rgba(0,151,57,0.25);
+      border-radius: 100px;
+      padding: 0.375rem 0.875rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .lang-toggle:hover {
+      background: rgba(0,151,57,0.15);
+      border-color: var(--c-green);
+    }
+    .lang-toggle span {
+      font-size: 0.75rem; font-weight: 600;
+      color: var(--c-green); letter-spacing: 0.05em;
+    }
+
+    /* ═══════════════════════════════════════════════
+       HERO SECTION
+    ═══════════════════════════════════════════════ */
+    #hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center;
+      padding: 8rem 1.5rem 5rem;
+      overflow: hidden;
+      background: var(--c-bg);
+    }
+
+    .hero-radial {
+      position: absolute; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 30%, rgba(0,151,57,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 80% 60%, rgba(239,51,64,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 40% at 20% 70%, rgba(0,151,57,0.05) 0%, transparent 60%);
+    }
+
+    .hero-overline {
+      display: inline-flex; align-items: center; gap: 0.625rem;
+      border: 1px solid rgba(0,151,57,0.28);
+      border-radius: 100px;
+      padding: 0.375rem 1rem;
+      font-size: 0.6875rem; font-weight: 600;
+      color: var(--c-green); letter-spacing: 0.18em; text-transform: uppercase;
+      background: rgba(0,151,57,0.06);
+      margin-bottom: 2.5rem;
+    }
+    .hero-overline .dot {
+      width: 5px; height: 5px;
+      background: var(--c-red); border-radius: 50%;
+      animation: pulse-dot 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(239,51,64,0.4); }
+      50%       { opacity: 0.7; transform: scale(0.85); box-shadow: 0 0 0 5px rgba(239,51,64,0); }
+    }
+
+    .hero-title {
+      font-size: clamp(2.75rem, 7vw, 6.5rem);
+      font-weight: 900; line-height: 1.04;
+      letter-spacing: -0.025em;
+      color: var(--c-black);
+      margin-bottom: 0.5rem;
+    }
+    .hero-title .red-word {
+      background: linear-gradient(135deg, var(--c-red) 0%, var(--c-red-dim) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-title .green-word {
+      background: linear-gradient(135deg, var(--c-green-light) 0%, var(--c-green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle-ar {
+      font-family: var(--font-ar);
+      font-size: clamp(1.5rem, 3.5vw, 3rem);
+      font-weight: 700; color: var(--c-muted);
+      margin-bottom: 2rem;
+    }
+    .hero-desc {
+      max-width: 560px; margin: 0 auto 3.5rem;
+      font-size: 1.0625rem; color: var(--c-muted);
+      font-weight: 400; line-height: 1.75;
+    }
+
+    .hero-cta-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: linear-gradient(135deg, var(--c-green) 0%, var(--c-green-dim) 100%);
+      color: #FFFFFF; font-weight: 700;
+      padding: 0.875rem 2rem; border-radius: 8px;
+      font-size: 0.875rem; letter-spacing: 0.04em;
+      transition: all var(--transition); border: none; cursor: pointer;
+      box-shadow: 0 0 24px rgba(0,151,57,0.22);
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 36px rgba(0,151,57,0.35);
+    }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: transparent;
+      color: var(--c-red); font-weight: 600;
+      padding: 0.875rem 2rem; border-radius: 8px;
+      font-size: 0.875rem; letter-spacing: 0.04em;
+      border: 1.5px solid rgba(239,51,64,0.3);
+      transition: all var(--transition); cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-secondary:hover {
+      background: rgba(239,51,64,0.07);
+      border-color: var(--c-red);
+      transform: translateY(-2px);
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      opacity: 0.4;
+    }
+    .scroll-indicator span {
+      font-size: 0.625rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--c-muted);
+    }
+    .scroll-chevron {
+      width: 20px; height: 20px;
+      border-right: 1.5px solid var(--c-green);
+      border-bottom: 1.5px solid var(--c-green);
+      transform: rotate(45deg);
+      animation: bounce-down 2s ease-in-out infinite;
+    }
+    @keyframes bounce-down {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50%       { transform: rotate(45deg) translateY(5px); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       SECTION SCAFFOLD
+    ═══════════════════════════════════════════════ */
+    .section { position: relative; z-index: 1; }
+    .section-inner {
+      max-width: 1240px; margin: 0 auto;
+      padding: 7rem 2rem;
+    }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.6875rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--c-green); margin-bottom: 1.25rem;
+    }
+    .section-tag::before {
+      content: ''; width: 24px; height: 2px;
+      background: linear-gradient(90deg, var(--c-green), var(--c-red));
+      flex-shrink: 0; border-radius: 2px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      font-weight: 800; line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--c-black);
+      margin-bottom: 1.25rem;
+    }
+    .section-desc {
+      font-size: 1.0625rem; color: var(--c-muted);
+      max-width: 520px; line-height: 1.75;
+    }
+
+    /* Divider */
+    .uae-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--c-green), var(--c-red), transparent);
+      opacity: 0.25;
+    }
+
+    /* ═══════════════════════════════════════════════
+       STATS DASHBOARD
+    ═══════════════════════════════════════════════ */
+    #stats { background: var(--c-surface); }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1px;
+      background: var(--c-border);
+      border: 1px solid var(--c-border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .stat-card {
+      background: #FFFFFF;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      transition: background var(--transition), box-shadow var(--transition);
+      position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--c-green), var(--c-red));
+      opacity: 0; transition: opacity var(--transition);
+    }
+    .stat-card:hover { background: #FAFFF9; box-shadow: 0 4px 20px rgba(0,151,57,0.07); }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-icon {
+      width: 48px; height: 48px;
+      background: var(--c-green-glow);
+      border: 1px solid rgba(0,151,57,0.18);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem; color: var(--c-green);
+    }
+    .stat-number {
+      font-size: 2.75rem; font-weight: 900;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 0.375rem;
+      background: linear-gradient(135deg, var(--c-green), var(--c-green-dim));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      font-size: 0.8125rem; color: var(--c-muted);
+      font-weight: 500; letter-spacing: 0.04em;
+    }
+
+    /* ═══════════════════════════════════════════════
+       IMPACT GRID (Sectors)
+    ═══════════════════════════════════════════════ */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .impact-card {
+      position: relative; overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: #FFFFFF;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      padding: 2.5rem;
+      cursor: default;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      will-change: transform;
+    }
+    .impact-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 80% at 50% -10%, rgba(0,151,57,0.06) 0%, transparent 60%);
+      opacity: 0; transition: opacity var(--transition);
+      pointer-events: none;
+    }
+    .impact-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0,151,57,0.3);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,151,57,0.08), 0 -1px 0 rgba(0,151,57,0.2) inset;
+    }
+    .impact-card:hover::before { opacity: 1; }
+
+    .card-icon-wrap {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.75rem;
+      position: relative; z-index: 1;
+    }
+    .card-tag {
+      font-size: 0.625rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--c-green); margin-bottom: 0.75rem;
+      position: relative; z-index: 1;
+    }
+    .card-title {
+      font-size: 1.375rem; font-weight: 700;
+      color: var(--c-black); margin-bottom: 0.875rem;
+      line-height: 1.25; position: relative; z-index: 1;
+    }
+    .card-desc {
+      font-size: 0.9375rem; color: var(--c-muted);
+      line-height: 1.7; margin-bottom: 1.75rem;
+      position: relative; z-index: 1;
+    }
+    .card-metrics {
+      display: flex; gap: 1.5rem;
+      border-top: 1px solid var(--c-border);
+      padding-top: 1.25rem;
+      position: relative; z-index: 1;
+    }
+    .metric { display: flex; flex-direction: column; gap: 0.25rem; }
+    .metric-val {
+      font-size: 1.125rem; font-weight: 700; color: var(--c-green);
+    }
+    .metric-key {
+      font-size: 0.6875rem; color: var(--c-muted);
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .card-corner {
+      position: absolute; bottom: 0; right: 0;
+      width: 80px; height: 80px; opacity: 0.04;
+      transition: opacity var(--transition);
+    }
+    .impact-card:hover .card-corner { opacity: 0.09; }
+
+    /* ═══════════════════════════════════════════════
+       PULSE PORTAL — Upload Section
+    ═══════════════════════════════════════════════ */
+    #portal { background: var(--c-surface); }
+
+    .portal-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .portal-container { grid-template-columns: 1fr; gap: 3rem; }
+    }
+
+    /* Upload drop zone */
+    .drop-zone {
+      border: 2px dashed rgba(0,151,57,0.28);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.7);
+      padding: 3rem 2rem;
+      text-align: center;
+      transition: all var(--transition);
+      cursor: pointer;
+      position: relative; overflow: hidden;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--c-green);
+      background: rgba(0,151,57,0.04);
+      box-shadow: 0 0 36px rgba(0,151,57,0.10);
+    }
+    .drop-zone.dragover { transform: scale(1.01); }
+
+    .drop-icon-ring {
+      width: 72px; height: 72px;
+      border: 1px solid rgba(0,151,57,0.22);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      color: var(--c-green);
+      background: var(--c-green-glow);
+      transition: all var(--transition);
+    }
+    .drop-zone:hover .drop-icon-ring, .drop-zone.dragover .drop-icon-ring {
+      background: rgba(0,151,57,0.12);
+      transform: scale(1.1);
+      box-shadow: 0 0 28px rgba(0,151,57,0.18);
+    }
+    .drop-title {
+      font-size: 1.0625rem; font-weight: 600;
+      color: var(--c-black); margin-bottom: 0.5rem;
+    }
+    .drop-hint {
+      font-size: 0.8125rem; color: var(--c-muted);
+      margin-bottom: 1.5rem;
+    }
+    .file-chips { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
+    .file-chip {
+      font-size: 0.6875rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--c-green);
+      border: 1px solid rgba(0,151,57,0.22);
+      border-radius: 100px;
+      padding: 0.25rem 0.625rem;
+      background: rgba(0,151,57,0.06);
+    }
+
+    /* File list */
+    .file-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .file-item {
+      display: flex; align-items: center; gap: 0.875rem;
+      background: #FFFFFF;
+      border: 1px solid var(--c-border);
+      border-radius: 12px; padding: 0.875rem 1rem;
+    }
+    .file-item-icon { color: var(--c-green); flex-shrink: 0; }
+    .file-item-info { flex: 1; min-width: 0; }
+    .file-item-name {
+      font-size: 0.875rem; font-weight: 500; color: var(--c-black);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .file-item-size { font-size: 0.6875rem; color: var(--c-muted); margin-top: 0.125rem; }
+    .file-remove {
+      color: var(--c-muted); cursor: pointer;
+      transition: color var(--transition); background: none; border: none;
+      padding: 4px; border-radius: 6px;
+    }
+    .file-remove:hover { color: var(--c-red); background: rgba(239,51,64,0.08); }
+
+    /* Progress bar */
+    .progress-wrap {
+      margin-top: 1.5rem; display: none;
+      flex-direction: column; gap: 0.625rem;
+    }
+    .progress-wrap.visible { display: flex; }
+    .progress-header {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .progress-label { font-size: 0.8125rem; font-weight: 500; color: var(--c-muted); }
+    .progress-pct { font-size: 0.8125rem; font-weight: 700; color: var(--c-green); }
+    .progress-track {
+      height: 4px; background: rgba(0,0,0,0.07);
+      border-radius: 100px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--c-green), var(--c-green-light), var(--c-red));
+      border-radius: 100px; width: 0%;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(0,151,57,0.4);
+    }
+
+    /* Form fields */
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label {
+      display: block;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--c-muted); margin-bottom: 0.5rem;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; background: #FFFFFF;
+      border: 1.5px solid rgba(0,0,0,0.12);
+      border-radius: 10px; padding: 0.75rem 1rem;
+      font-size: 0.9375rem; color: var(--c-black);
+      font-family: inherit;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none; resize: none;
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: rgba(10,10,10,0.3); }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--c-green);
+      box-shadow: 0 0 0 3px rgba(0,151,57,0.10);
+    }
+    .form-select { appearance: none; cursor: pointer; }
+    .form-select option { background: #FFFFFF; color: var(--c-black); }
+
+    /* ── Success Seal ── */
+    .success-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    .success-overlay.active { opacity: 1; pointer-events: all; }
+    .success-modal {
+      background: #FFFFFF;
+      border: 1px solid rgba(0,151,57,0.25);
+      border-radius: 24px;
+      padding: 3.5rem;
+      text-align: center;
+      max-width: 420px; width: 90%;
+      position: relative;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.12), 0 0 40px rgba(0,151,57,0.08);
+    }
+    .seal-ring {
+      width: 100px; height: 100px;
+      margin: 0 auto 2rem;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .seal-outer {
+      position: absolute; inset: 0;
+      border: 2px solid var(--c-green);
+      border-radius: 50%;
+      animation: spin-slow 8s linear infinite;
+    }
+    .seal-inner {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--c-green), var(--c-green-dim));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #FFFFFF;
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .success-title {
+      font-size: 1.375rem; font-weight: 800;
+      color: var(--c-black); margin-bottom: 0.75rem;
+    }
+    .success-desc { font-size: 0.9375rem; color: var(--c-muted); line-height: 1.65; }
+    .success-close {
+      margin-top: 2rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(0,151,57,0.08);
+      border: 1px solid rgba(0,151,57,0.22);
+      color: var(--c-green); font-weight: 600;
+      font-size: 0.875rem; padding: 0.75rem 1.75rem;
+      border-radius: 100px; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .success-close:hover { background: rgba(0,151,57,0.16); border-color: var(--c-green); }
+
+    /* ═══════════════════════════════════════════════
+       TIMELINE — Strict Zig-Zag with UAE Pulse Line
+    ═══════════════════════════════════════════════ */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 0;
+      align-items: start;
+      padding: 2.5rem 0;
+    }
+
+    /* Natural zig-zag: odd items → content left, even items → content right.
+       The HTML structure places content in the correct div per item.
+       We only need text-align tweaks for even items' right content. */
+    .timeline-item:nth-child(odd)  .tl-content-left  { text-align: left; }
+    .timeline-item:nth-child(even) .tl-content-right { text-align: right; }
+    .timeline-item:nth-child(even) .tl-content-right .tl-year,
+    .timeline-item:nth-child(even) .tl-content-right .tl-event-title,
+    .timeline-item:nth-child(even) .tl-content-right .tl-event-desc { text-align: right; }
+
+    /* Hero icon chips on timeline items */
+    .tl-sector-chip {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      font-size: 0.625rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; border-radius: 100px;
+      padding: 0.25rem 0.625rem; margin-bottom: 0.625rem;
+    }
+    .tl-sector-chip.green {
+      color: var(--c-green); background: rgba(0,151,57,0.08);
+      border: 1px solid rgba(0,151,57,0.2);
+    }
+    .tl-sector-chip.red {
+      color: var(--c-red); background: rgba(239,51,64,0.07);
+      border: 1px solid rgba(239,51,64,0.2);
+    }
+
+    .tl-center {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0;
+    }
+    .tl-node {
+      width: 16px; height: 16px;
+      border: 2.5px solid var(--c-green);
+      border-radius: 50%; background: #FFFFFF;
+      position: relative; flex-shrink: 0;
+      z-index: 1;
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
+    .tl-node::before {
+      content: ''; position: absolute; inset: 3px;
+      background: var(--c-green); border-radius: 50%;
+      transition: background 0.4s;
+    }
+    .timeline-item:nth-child(even) .tl-node {
+      border-color: var(--c-red);
+    }
+    .timeline-item:nth-child(even) .tl-node::before {
+      background: var(--c-red);
+    }
+    /* Node pulse animation on scroll (class added via JS) */
+    .tl-node.pulse-active {
+      box-shadow: 0 0 0 6px rgba(0,151,57,0.15);
+    }
+    .timeline-item:nth-child(even) .tl-node.pulse-active {
+      box-shadow: 0 0 0 6px rgba(239,51,64,0.12);
+    }
+
+    .tl-line {
+      width: 2px; flex: 1; min-height: 70px;
+      background: linear-gradient(to bottom, var(--c-green), rgba(0,151,57,0.15));
+      transform-origin: top;
+      transform: scaleY(0);
+      transition: none;
+    }
+    .timeline-item:nth-child(even) .tl-line {
+      background: linear-gradient(to bottom, var(--c-red), rgba(239,51,64,0.12));
+    }
+    .tl-line.animated { transform: scaleY(1); transition: transform 1.1s cubic-bezier(0.22,1,0.36,1); }
+
+    .tl-content-left, .tl-content-right { padding: 0 2rem; }
+
+    .tl-year {
+      font-size: 0.6875rem; font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+    .timeline-item:nth-child(odd)  .tl-year { color: var(--c-green); }
+    .timeline-item:nth-child(even) .tl-year { color: var(--c-red); }
+
+    .tl-event-title {
+      font-size: 1.0625rem; font-weight: 700;
+      color: var(--c-black); margin-bottom: 0.375rem;
+      line-height: 1.3;
+    }
+    .tl-event-desc {
+      font-size: 0.875rem; color: var(--c-muted); line-height: 1.65;
+    }
+    .tl-hero-action {
+      margin-top: 0.75rem; padding: 0.75rem 1rem;
+      border-radius: 10px; background: var(--c-surface);
+      border-left: 3px solid var(--c-green);
+      font-size: 0.8125rem; color: var(--c-text); line-height: 1.6;
+    }
+    .timeline-item:nth-child(even) .tl-hero-action {
+      border-left: none;
+      border-right: 3px solid var(--c-red);
+    }
+
+    /* ── Mobile Timeline ── */
+    @media (max-width: 768px) {
+      .timeline-item {
+        grid-template-columns: 24px 1fr;
+        grid-template-rows: auto;
+      }
+      .tl-content-left, .tl-content-right {
+        grid-column: 2; padding: 0 0 0 1rem;
+      }
+      .tl-content-right { grid-column: 2; text-align: left !important; }
+      .tl-content-right .tl-year,
+      .tl-content-right .tl-event-title,
+      .tl-content-right .tl-event-desc { text-align: left !important; }
+      .tl-center { grid-column: 1; grid-row: 1; }
+      /* On mobile, even items: right content moves to grid-column 2 naturally */
+      .timeline-item:nth-child(even) .tl-content-left { display: none; }
+      .timeline-item:nth-child(odd)  .tl-content-right { display: none; }
+      .tl-hero-action { border-right: none !important; border-left: 3px solid var(--c-green) !important; }
+      .timeline-item:nth-child(even) .tl-hero-action { border-left: 3px solid var(--c-red) !important; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       LEADERSHIP QUOTE SECTION
+    ═══════════════════════════════════════════════ */
+    #leadership {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,151,57,0.04) 0%, transparent 70%);
+    }
+    .leadership-quote-wrap {
+      max-width: 760px; margin: 0 auto; text-align: center;
+    }
+    .quote-mark {
+      font-size: 6rem; line-height: 0;
+      color: var(--c-green); opacity: 0.2;
+      font-family: Georgia, serif;
+      display: block; margin-bottom: 2rem;
+    }
+    .quote-text {
+      font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+      font-weight: 400; line-height: 1.75;
+      color: var(--c-black);
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    .quote-attr {
+      font-size: 0.8125rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--c-green);
+    }
+    .quote-bar {
+      width: 40px; height: 3px;
+      background: linear-gradient(90deg, var(--c-green), var(--c-red));
+      margin: 1rem auto 1.5rem; border-radius: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════ */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--c-border);
+      background: var(--c-surface);
+      padding: 3rem 2rem 2rem;
+    }
+    .footer-inner {
+      max-width: 1240px; margin: 0 auto;
+      display: flex; flex-wrap: wrap;
+      gap: 2rem; justify-content: space-between; align-items: center;
+    }
+    .footer-brand { display: flex; align-items: center; gap: 0.875rem; }
+    .footer-copy { font-size: 0.75rem; color: var(--c-muted); line-height: 1.6; }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-link {
+      font-size: 0.75rem; color: var(--c-muted);
+      text-decoration: none; letter-spacing: 0.04em;
+      transition: color var(--transition);
+    }
+    .footer-link:hover { color: var(--c-green); }
+    .footer-uae {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; color: var(--c-muted);
+    }
+
+    /* ═══════════════════════════════════════════════
+       GSAP INITIAL STATES
+    ═══════════════════════════════════════════════ */
+    .gsap-fade-up    { opacity: 0; transform: translateY(40px); }
+    .gsap-fade-in    { opacity: 0; }
+    .gsap-slide-left  { opacity: 0; transform: translateX(-40px); }
+    .gsap-slide-right { opacity: 0; transform: translateX(40px); }
+
+    /* ═══════════════════════════════════════════════
+       MISC UTILITIES
+    ═══════════════════════════════════════════════ */
+    .glass-surface {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--c-border); border-radius: 16px;
+    }
+
+    /* RTL overrides */
+    html[dir="rtl"] .section-tag::before { display: none; }
+    html[dir="rtl"] .section-tag::after {
+      content: ''; width: 24px; height: 2px;
+      background: linear-gradient(90deg, var(--c-red), var(--c-green));
+      flex-shrink: 0; border-radius: 2px;
+    }
+    html[dir="rtl"] .nav-link::after { transform-origin: center; }
+    html[dir="rtl"] .tl-content-right { text-align: right; }
+    html[dir="rtl"] .timeline-item:nth-child(even) .tl-content-right { text-align: left; }
+
+    /* Accent ring decoration */
+    .accent-ring {
+      position: absolute; border-radius: 50%;
+      border: 1px solid rgba(0,151,57,0.06);
+      pointer-events: none;
+    }
+
+    /* UAE flag ribbon */
+    .uae-ribbon { display: flex; gap: 3px; align-items: center; }
+    .ribbon-seg { height: 3px; border-radius: 100px; }
+
+    /* Animated number class (JS target) */
+    .counter-val { display: inline; }
+
+    /* ── Mobile nav ── */
+    .mobile-menu {
+      display: none; flex-direction: column; gap: 0.5rem;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 2px solid transparent;
+      border-image: linear-gradient(90deg, var(--c-green), var(--c-red)) 1;
+      padding: 1.5rem 2.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .mobile-menu.open { display: flex; }
+    .hamburger { display: none; cursor: pointer; color: var(--c-muted); }
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .desktop-nav { display: none !important; }
+    }
+
+    /* March 2026 special styling */
+    .tl-march2026-badge {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      background: linear-gradient(135deg, var(--c-green), var(--c-green-dim));
+      color: #fff; font-size: 0.5625rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 0.2rem 0.6rem; border-radius: 100px;
+      margin-bottom: 0.75rem;
+    }
+    .tl-sub-item {
+      display: flex; align-items: flex-start; gap: 0.625rem;
+      margin-top: 0.625rem; font-size: 0.8125rem; color: var(--c-muted); line-height: 1.55;
+    }
+    .tl-sub-item svg { flex-shrink: 0; margin-top: 2px; }
+  </style>
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     CANVAS BACKGROUND — UAE constellation particles
+══════════════════════════════════════════════════════ -->
+<canvas id="constellation-canvas"></canvas>
+
+<!-- ══════════════════════════════════════════════════════
+     SUCCESS OVERLAY
+══════════════════════════════════════════════════════ -->
+<div class="success-overlay" id="success-overlay" role="dialog" aria-modal="true" aria-label="Success">
+  <div class="success-modal">
+    <div style="position:relative; margin-bottom:2rem;">
+      <div class="seal-ring" id="seal-ring">
+        <div class="seal-outer"></div>
+        <svg style="position:absolute;inset:0;" width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" fill="none"
+            stroke="rgba(0,151,57,0.3)" stroke-width="1"
+            stroke-dasharray="6 4"/>
+        </svg>
+        <div class="seal-inner">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <h3 class="success-title ltr-only">Submission Received</h3>
+    <h3 class="success-title rtl-only" style="font-family:var(--font-ar);">تم استلام الطلب</h3>
+    <p class="success-desc ltr-only">
+      Your national identity documents have been submitted to the <strong style="color:var(--c-green)">Pulse of The Nation</strong> registry. Our team will review and process your contribution shortly.
+    </p>
+    <p class="success-desc rtl-only" style="font-family:var(--font-ar);">
+      تم تقديم وثائقك إلى سجل <strong style="color:var(--c-green)">نبض الهوية</strong>. سيقوم فريقنا بمراجعة مساهمتك ومعالجتها قريبًا.
+    </p>
+    <div style="margin:1.5rem 0 0; display:flex; justify-content:center;">
+      <div class="uae-ribbon">
+        <div class="ribbon-seg" style="width:28px; background:#009739;"></div>
+        <div class="ribbon-seg" style="width:28px; background:#fff; border:1px solid #eee;"></div>
+        <div class="ribbon-seg" style="width:28px; background:#000;"></div>
+        <div class="ribbon-seg" style="width:10px; background:#EF3340;"></div>
+      </div>
+    </div>
+    <button class="success-close" id="close-success">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <span class="ltr-only">Close</span>
+      <span class="rtl-only" style="font-family:var(--font-ar);">إغلاق</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     NAVIGATION — White Glassmorphism
+══════════════════════════════════════════════════════ -->
+<nav id="navbar" aria-label="Main navigation">
+  <div style="max-width:1240px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:1.5rem;">
+
+    <!-- Logo -->
+    <a href="#hero" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none;" aria-label="Pulse of The Nation">
+      <div class="nav-logo-mark" aria-hidden="true">ن</div>
+      <div>
+        <div class="ltr-only" style="font-size:0.875rem; font-weight:700; color:var(--c-black); letter-spacing:0.02em; line-height:1.2;">PULSE<span style="color:var(--c-red)"> ·</span> NATION</div>
+        <div class="rtl-only" style="font-size:0.875rem; font-weight:700; color:var(--c-black); font-family:var(--font-ar); line-height:1.2;">نبض <span style="color:var(--c-red)">·</span> الهوية</div>
+        <div style="font-size:0.5625rem; color:var(--c-muted); letter-spacing:0.16em; text-transform:uppercase;">UAE National Identity</div>
+      </div>
+    </a>
+
+    <!-- Desktop links -->
+    <div class="desktop-nav" style="display:flex; align-items:center; gap:2.5rem;">
+      <a href="#heroes" class="nav-link ltr-only">Heroes</a>
+      <a href="#heroes" class="nav-link rtl-only" style="font-family:var(--font-ar);">الأبطال</a>
+      <a href="#impact" class="nav-link ltr-only">Impact</a>
+      <a href="#impact" class="nav-link rtl-only" style="font-family:var(--font-ar);">الأثر</a>
+      <a href="#portal" class="nav-link ltr-only">Portal</a>
+      <a href="#portal" class="nav-link rtl-only" style="font-family:var(--font-ar);">البوابة</a>
+      <a href="#mission" class="nav-link ltr-only">Mission</a>
+      <a href="#mission" class="nav-link rtl-only" style="font-family:var(--font-ar);">الرسالة</a>
+    </div>
+
+    <!-- Right actions -->
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <button class="lang-toggle" id="lang-toggle" aria-label="Toggle language">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--c-green)">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span class="ltr-only">عربي</span>
+        <span class="rtl-only">English</span>
+      </button>
+      <a href="#portal" class="btn-primary ltr-only" style="padding:0.625rem 1.25rem; font-size:0.8125rem;">Submit Story</a>
+      <a href="#portal" class="btn-primary rtl-only" style="padding:0.625rem 1.25rem; font-size:0.8125rem; font-family:var(--font-ar);">أرسل قصتك</a>
+      <!-- Mobile hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#heroes" class="nav-link ltr-only">Heroes</a>
+  <a href="#heroes" class="nav-link rtl-only">الأبطال</a>
+  <a href="#impact" class="nav-link ltr-only">Impact</a>
+  <a href="#impact" class="nav-link rtl-only">الأثر</a>
+  <a href="#portal" class="nav-link ltr-only">Portal</a>
+  <a href="#portal" class="nav-link rtl-only">البوابة</a>
+  <a href="#mission" class="nav-link ltr-only">Mission</a>
+  <a href="#mission" class="nav-link rtl-only">الرسالة</a>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     HERO SECTION
+══════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-radial"></div>
+
+  <!-- Decorative rings -->
+  <div class="accent-ring" style="width:500px;height:500px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="accent-ring" style="width:800px;height:800px;top:50%;left:50%;transform:translate(-50%,-50%); border-color:rgba(239,51,64,0.04);"></div>
+
+  <!-- Content -->
+  <div style="position:relative; z-index:2; width:100%;">
+    <div class="hero-overline gsap-fade-in" id="hero-tag">
+      <span class="dot"></span>
+      <span class="ltr-only">May Ahmed Mourad &nbsp;·&nbsp; 11C</span>
+      <span class="rtl-only" style="font-family:var(--font-ar);">مي أحمد مراد</span>
+    </div>
+
+    <h1 class="hero-title" id="hero-h1">
+      <div class="gsap-fade-up" id="h1-line1">
+        <span class="ltr-only">Salute to the <span class="red-word">First</span></span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">تحية لـ<span class="red-word">خط الدفاع</span></span>
+      </div>
+      <div class="gsap-fade-up" id="h1-line2">
+        <span class="ltr-only"><span class="green-word">Line</span> of Defense</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);"><span class="green-word">الأول</span></span>
+      </div>
+    </h1>
+
+    <div class="hero-subtitle-ar gsap-fade-up" id="hero-subtitle">
+      <span class="ltr-only" style="font-family:var(--font-ar); font-size:clamp(1.125rem,2.5vw,2rem); color:var(--c-green); opacity:0.7;">نبض الهوية</span>
+      <span class="rtl-only" style="font-size:clamp(1rem,2vw,1.5rem); color:var(--c-green); opacity:0.7; font-family:var(--font-en);">Pulse of The Nation</span>
+    </div>
+
+    <p class="hero-desc gsap-fade-up" id="hero-desc">
+      <span class="ltr-only">A national educational platform honouring the heroes of the UAE — those who guard our safety, heal our sick, and volunteer in our communities. Celebrating loyalty, unity, and an unbreakable national spirit.</span>
+      <span class="rtl-only" style="font-family:var(--font-ar);">منصة وطنية تعليمية للاحتفاء بأبطال الإمارات — حُرَّاس أمننا ومُعافو مرضانا ومتطوعو مجتمعاتنا. نحتفي بالولاء والوحدة والروح الوطنية التي لا تُقهر.</span>
+    </p>
+
+    <div class="hero-cta-group gsap-fade-up" id="hero-ctas">
+      <a href="#impact" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        <span class="ltr-only">Meet Our Heroes</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">تعرّف على أبطالنا</span>
+      </a>
+      <a href="#portal" class="btn-secondary">
+        <span class="ltr-only">Submit Your Story</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">شارك قصتك</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <!-- UAE flag ribbon -->
+    <div style="display:flex; justify-content:center; margin-top:3.5rem;" class="gsap-fade-in" id="hero-ribbon">
+      <div class="uae-ribbon">
+        <div class="ribbon-seg" style="width:60px;background:#009739;height:4px;"></div>
+        <div class="ribbon-seg" style="width:60px;background:#000000;height:4px;"></div>
+        <div class="ribbon-seg" style="width:60px;background:#ffffff;height:4px;border:1px solid rgba(0,0,0,0.1);"></div>
+        <div class="ribbon-seg" style="width:20px;background:#EF3340;height:4px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator" aria-hidden="true">
+    <span class="ltr-only">Scroll</span>
+    <span class="rtl-only">تمرير</span>
+    <div class="scroll-chevron"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     STATS DASHBOARD
+══════════════════════════════════════════════════════ -->
+<section id="heroes" class="section" style="background:var(--c-surface);">
+  <div class="section-inner" style="padding-top:5rem; padding-bottom:5rem;">
+    <div class="uae-divider" style="margin-bottom:4rem;"></div>
+    <div class="stats-grid" id="stats-grid">
+
+      <div class="stat-card gsap-fade-up">
+        <div class="stat-icon" aria-hidden="true">
+          <!-- Lucide: users icon (UAE Green) -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#009739" stroke-width="1.75"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="stat-number"><span class="counter-val" data-target="48000" data-suffix="+">0</span></div>
+        <div class="stat-label ltr-only">Frontline Personnel</div>
+        <div class="stat-label rtl-only" style="font-family:var(--font-ar);">منتسب في الصف الأول</div>
+      </div>
+
+      <div class="stat-card gsap-fade-up">
+        <div class="stat-icon" aria-hidden="true">
+          <!-- Lucide: activity icon (UAE Red) -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF3340" stroke-width="1.75"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div class="stat-number" style="background:linear-gradient(135deg, var(--c-red), var(--c-red-dim)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">
+          <span class="counter-val" data-target="3200000" data-suffix="">0</span>
+        </div>
+        <div class="stat-label ltr-only">Lives Touched</div>
+        <div class="stat-label rtl-only" style="font-family:var(--font-ar);">حياة تأثرت إيجابيًا</div>
+      </div>
+
+      <div class="stat-card gsap-fade-up">
+        <div class="stat-icon" aria-hidden="true">
+          <!-- Lucide: clock icon (UAE Green) -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#009739" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="stat-number"><span class="counter-val" data-target="12500000" data-suffix="">0</span></div>
+        <div class="stat-label ltr-only">Service Hours Logged</div>
+        <div class="stat-label rtl-only" style="font-family:var(--font-ar);">ساعة خدمة مسجّلة</div>
+      </div>
+
+      <div class="stat-card gsap-fade-up">
+        <div class="stat-icon" aria-hidden="true">
+          <!-- Lucide: star icon (UAE Red) -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF3340" stroke-width="1.75"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="stat-number" style="background:linear-gradient(135deg, var(--c-red), var(--c-red-dim)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">
+          <span class="counter-val" data-target="7" data-suffix=" Emirates">0</span>
+        </div>
+        <div class="stat-label ltr-only">Emirates United</div>
+        <div class="stat-label rtl-only" style="font-family:var(--font-ar);">إمارة متحدة</div>
+      </div>
+
+    </div>
+    <div class="uae-divider" style="margin-top:4rem;"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     IMPACT GRID — Sectors
+══════════════════════════════════════════════════════ -->
+<section id="impact" class="section">
+  <div class="section-inner">
+
+    <div style="display:grid; grid-template-columns:1fr auto; align-items:end; gap:2rem; margin-bottom:4rem; flex-wrap:wrap;">
+      <div>
+        <div class="section-tag gsap-fade-up">
+          <span class="ltr-only">Sectors of Service</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">قطاعات الخدمة</span>
+        </div>
+        <h2 class="section-title gsap-fade-up">
+          <span class="ltr-only">The Pillars Who<br>Hold the Nation</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">الركائز التي<br>تحمل الوطن</span>
+        </h2>
+        <p class="section-desc gsap-fade-up">
+          <span class="ltr-only">Three vital sectors stand at the forefront — each representing a distinct form of national sacrifice, service, and extraordinary commitment to the UAE and its people.</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">ثلاثة قطاعات حيوية تقف في الطليعة — يمثّل كل منها شكلاً مميزاً من التضحية الوطنية والخدمة والالتزام الاستثنائي تجاه الإمارات وشعبها.</span>
+        </p>
+      </div>
+      <div class="uae-ribbon gsap-fade-in" style="flex-direction:column; align-items:flex-end; gap:3px;">
+        <div class="ribbon-seg" style="width:40px; height:3px; background:#009739;"></div>
+        <div class="ribbon-seg" style="width:30px; height:3px; background:#000;"></div>
+        <div class="ribbon-seg" style="width:20px; height:3px; background:#ffffff; border:1px solid rgba(0,0,0,0.12);"></div>
+        <div class="ribbon-seg" style="width:8px;  height:3px; background:#EF3340;"></div>
+      </div>
+    </div>
+
+    <div class="impact-grid" id="impact-grid">
+
+      <!-- Medical — UAE Green icon -->
+      <div class="impact-card gsap-fade-up" tabindex="0">
+        <div class="card-icon-wrap" style="background:rgba(0,151,57,0.10); border:1px solid rgba(0,151,57,0.22);">
+          <!-- Lucide: stethoscope / heartbeat — Medical sector in UAE Green -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#009739" stroke-width="1.75"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div class="card-tag ltr-only">Sector 01 — Medical</div>
+        <div class="card-tag rtl-only" style="font-family:var(--font-ar);">القطاع 01 — الطبي</div>
+        <h3 class="card-title">
+          <span class="ltr-only">Healthcare Champions</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">أبطال الرعاية الصحية</span>
+        </h3>
+        <p class="card-desc">
+          <span class="ltr-only">Doctors, nurses, paramedics, and support staff who work tirelessly to protect the health and wellbeing of every resident of the UAE. Present in every emergency, every recovery room, every critical moment.</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">أطباء وممرضون ومسعفون وموظفو دعم يعملون بلا كلل لحماية صحة كل مقيم في الإمارات. حاضرون في كل طارئة وغرفة تعافٍ ولحظة حرجة.</span>
+        </p>
+        <div class="card-metrics">
+          <div class="metric">
+            <span class="metric-val">24,000+</span>
+            <span class="metric-key ltr-only">Personnel</span>
+            <span class="metric-key rtl-only" style="font-family:var(--font-ar);">منتسب</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val">99.2%</span>
+            <span class="metric-key ltr-only">Response Rate</span>
+            <span class="metric-key rtl-only" style="font-family:var(--font-ar);">معدل الاستجابة</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val">7 Emirates</span>
+            <span class="metric-key ltr-only">Coverage</span>
+            <span class="metric-key rtl-only" style="font-family:var(--font-ar);">التغطية</span>
+          </div>
+        </div>
+        <svg class="card-corner" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M80 80L0 80L0 0" stroke="#009739" stroke-width="40" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- Emergency Services — UAE Red icon -->
+      <div class="impact-card gsap-fade-up" tabindex="0">
+        <div class="card-icon-wrap" style="background:rgba(239,51,64,0.08); border:1px solid rgba(239,51,64,0.2);">
+          <!-- Lucide: shield (Civil Defense) — UAE Red -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#EF3340" stroke-width="1.75"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div class="card-tag ltr-only" style="color:var(--c-red);">Sector 02 — Emergency</div>
+        <div class="card-tag rtl-only" style="font-family:var(--font-ar); color:var(--c-red);">القطاع 02 — الطوارئ</div>
+        <h3 class="card-title">
+          <span class="ltr-only">Emergency & Civil Defense</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">الطوارئ والدفاع المدني</span>
+        </h3>
+        <p class="card-desc">
+          <span class="ltr-only">Police, firefighters, civil defense units, and coast guard personnel who run toward danger so others may run away. The invisible shield that allows the UAE to thrive in safety and confidence.</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">الشرطة والإطفاء ووحدات الدفاع المدني وخفر السواحل الذين يركضون نحو الخطر ليبتعد الآخرون. الدرع غير المرئي الذي يتيح للإمارات الازدهار بأمان وثقة.</span>
+        </p>
+        <div class="card-metrics">
+          <div class="metric">
+            <span class="metric-val" style="color:var(--c-red);">18,000+</span>
+            <span class="metric-key ltr-only">Personnel</span>
+            <span class="metric-key rtl-only" style="font-family:var(--font-ar);">منتسب</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val" style="color:var(--c-red);">&lt; 4 min</span>
+            <span class="metric-key ltr-only">Avg Response</span>
+            <span class="metric-key rtl-only" style="font-family:var(--font-ar);">متوسط الاستجابة</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val" style="color:var(--c-red);">365</span>
+            <span class="metric-key ltr-only">Days On Duty</span>
+            <span class="metric-key rtl-only" style="font-family:var(--font-ar);">يوم في الخدمة</span>
+          </div>
+        </div>
+        <svg class="card-corner" viewBox="0 0 80 80" fill="none">
+          <path d="M80 80L0 80L0 0" stroke="#EF3340" stroke-width="40" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- Volunteering — UAE Green icon -->
+      <div class="impact-card gsap-fade-up" tabindex="0">
+        <div class="card-icon-wrap" style="background:rgba(0,151,57,0.07); border:1px solid rgba(0,151,57,0.18);">
+          <!-- Lucide: heart (Volunteers) — UAE Green -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#009739" stroke-width="1.75"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="card-tag ltr-only">Sector 03 — Volunteering</div>
+        <div class="card-tag rtl-only" style="font-family:var(--font-ar);">القطاع 03 — التطوع</div>
+        <h3 class="card-title">
+          <span class="ltr-only">Community Volunteers</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">متطوعو المجتمع</span>
+        </h3>
+        <p class="card-desc">
+          <span class="ltr-only">Citizens and residents who give their time, skills, and compassion freely — building bridges between communities, supporting vulnerable populations, and embodying the true spirit of Emirati generosity.</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">مواطنون ومقيمون يمنحون وقتهم ومهاراتهم وتعاطفهم بحرية — يبنون الجسور بين المجتمعات ويدعمون الفئات الضعيفة ويجسّدون روح الكرم الإماراتي الحقيقية.</span>
+        </p>
+        <div class="card-metrics">
+          <div class="metric">
+            <span class="metric-val">6,000+</span>
+            <span class="metric-key ltr-only">Active Volunteers</span>
+            <span class="metric-key rtl-only" style="font-family:var(--font-ar);">متطوع نشط</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val">500K+</span>
+            <span class="metric-key ltr-only">Hours / Year</span>
+            <span class="metric-key rtl-only" style="font-family:var(--font-ar);">ساعة سنويًا</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val">200+</span>
+            <span class="metric-key ltr-only">Initiatives</span>
+            <span class="metric-key rtl-only" style="font-family:var(--font-ar);">مبادرة</span>
+          </div>
+        </div>
+        <svg class="card-corner" viewBox="0 0 80 80" fill="none">
+          <path d="M80 80L0 80L0 0" stroke="#009739" stroke-width="40" fill="none"/>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     LEADERSHIP QUOTE
+══════════════════════════════════════════════════════ -->
+<section id="leadership" class="section" style="background:var(--c-surface);">
+  <div class="section-inner" style="padding-top:6rem; padding-bottom:6rem;">
+    <div class="leadership-quote-wrap">
+      <span class="quote-mark" aria-hidden="true">"</span>
+      <blockquote class="quote-text gsap-fade-up">
+        <span class="ltr-only">The UAE's frontline heroes are the true embodiment of our national values — sacrifice, dedication, and an unwavering commitment to the prosperity and security of our beloved nation and its people.</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">أبطال الصف الأول في الإمارات هم التجسيد الحقيقي لقيمنا الوطنية — التضحية والتفاني والالتزام الثابت برخاء وطننا الحبيب وأمن شعبه.</span>
+      </blockquote>
+      <div class="quote-bar gsap-fade-in"></div>
+      <div class="quote-attr gsap-fade-up">
+        <span class="ltr-only">H.H. Sheikh Mohammed bin Rashid Al Maktoum</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">صاحب السمو الشيخ محمد بن راشد آل مكتوم</span>
+      </div>
+      <div style="font-size:0.75rem; color:var(--c-muted); margin-top:0.375rem; letter-spacing:0.08em;">
+        <span class="ltr-only">Vice President & Prime Minister of the UAE · Ruler of Dubai</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">نائب رئيس الدولة رئيس مجلس الوزراء حاكم دبي</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     PULSE PORTAL — National Identity Upload
+══════════════════════════════════════════════════════ -->
+<section id="portal" class="section">
+  <div class="section-inner">
+
+    <div style="text-align:center; margin-bottom:4rem;">
+      <div class="section-tag gsap-fade-up" style="justify-content:center;">
+        <span class="ltr-only">National Identity Portal</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">بوابة الهوية الوطنية</span>
+      </div>
+      <h2 class="section-title gsap-fade-up">
+        <span class="ltr-only">Pulse of The Nation</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">نبض الهوية</span>
+      </h2>
+      <p class="section-desc gsap-fade-up" style="margin:0 auto; text-align:center;">
+        <span class="ltr-only">Submit your national identity story, recognition, or documentation to the official UAE Frontline Heroes registry — preserving our collective memory for future generations.</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">قدّم قصة هويتك الوطنية أو تكريمك أو وثائقك إلى سجل أبطال الصف الأول الإماراتي الرسمي — للحفاظ على ذاكرتنا الجماعية للأجيال القادمة.</span>
+      </p>
+    </div>
+
+    <div class="portal-container">
+
+      <!-- Left: Form -->
+      <div class="gsap-slide-left">
+        <div class="form-group">
+          <label class="form-label ltr-only">Full Name</label>
+          <label class="form-label rtl-only" style="font-family:var(--font-ar);">الاسم الكامل</label>
+          <input class="form-input" type="text" id="form-name"
+            placeholder="Enter your full name / أدخل اسمك الكامل" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label ltr-only">Emirates ID / National ID</label>
+          <label class="form-label rtl-only" style="font-family:var(--font-ar);">رقم الهوية الإماراتية</label>
+          <input class="form-input" type="text" id="form-id"
+            placeholder="784-XXXX-XXXXXXX-X" />
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label class="form-label ltr-only">Sector</label>
+            <label class="form-label rtl-only" style="font-family:var(--font-ar);">القطاع</label>
+            <select class="form-select" id="form-sector">
+              <option value="">Select sector</option>
+              <option value="medical">Medical / الطبي</option>
+              <option value="emergency">Emergency Services / الطوارئ</option>
+              <option value="volunteer">Volunteering / التطوع</option>
+              <option value="military">Military / العسكري</option>
+              <option value="education">Education / التعليم</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label ltr-only">Emirate</label>
+            <label class="form-label rtl-only" style="font-family:var(--font-ar);">الإمارة</label>
+            <select class="form-select" id="form-emirate">
+              <option value="">Select emirate</option>
+              <option>Abu Dhabi / أبوظبي</option>
+              <option>Dubai / دبي</option>
+              <option>Sharjah / الشارقة</option>
+              <option>Ajman / عجمان</option>
+              <option>Fujairah / الفجيرة</option>
+              <option>Ras Al Khaimah / رأس الخيمة</option>
+              <option>Umm Al Quwain / أم القيوين</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label ltr-only">Story of Service</label>
+          <label class="form-label rtl-only" style="font-family:var(--font-ar);">قصة الخدمة</label>
+          <textarea class="form-textarea" rows="4" id="form-story"
+            placeholder="Describe your contribution, the hero's service, or the event you wish to commemorate..."></textarea>
+        </div>
+
+        <button class="btn-primary" id="submit-btn" style="width:100%; justify-content:center; padding:1rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+          <span class="ltr-only">Submit to National Registry</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">أرسل إلى السجل الوطني</span>
+        </button>
+      </div>
+
+      <!-- Right: Upload zone -->
+      <div class="gsap-slide-right">
+        <div style="margin-bottom:1.5rem;">
+          <div class="section-tag" style="margin-bottom:0.75rem;">
+            <span class="ltr-only">Document Upload</span>
+            <span class="rtl-only" style="font-family:var(--font-ar);">تحميل الوثائق</span>
+          </div>
+          <p style="font-size:0.875rem; color:var(--c-muted); line-height:1.65;">
+            <span class="ltr-only">Attach supporting documents, photos, or certificates that honour the frontline hero or verify national identity. Accepted: PDF, JPG, PNG.</span>
+            <span class="rtl-only" style="font-family:var(--font-ar);">أرفق الوثائق الداعمة أو الصور أو الشهادات التي تكرّم البطل أو تُثبت الهوية الوطنية. المقبول: PDF وJPG وPNG.</span>
+          </p>
+        </div>
+
+        <!-- Drop zone -->
+        <div class="drop-zone" id="drop-zone" role="button" tabindex="0"
+          aria-label="Drag and drop area for file upload">
+          <input type="file" id="file-input" multiple accept=".pdf,.jpg,.jpeg,.png"
+            style="display:none;" />
+          <div class="drop-icon-ring" id="drop-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+              <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+            </svg>
+          </div>
+          <div class="drop-title ltr-only">Drag documents here</div>
+          <div class="drop-title rtl-only" style="font-family:var(--font-ar);">اسحب المستندات هنا</div>
+          <div class="drop-hint ltr-only">or click to browse your files</div>
+          <div class="drop-hint rtl-only" style="font-family:var(--font-ar);">أو انقر لاستعراض ملفاتك</div>
+          <div class="file-chips">
+            <span class="file-chip">PDF</span>
+            <span class="file-chip">JPG</span>
+            <span class="file-chip">PNG</span>
+            <span class="file-chip">Max 10MB</span>
+          </div>
+        </div>
+
+        <!-- File list -->
+        <div class="file-list" id="file-list"></div>
+
+        <!-- Progress bar -->
+        <div class="progress-wrap" id="progress-wrap">
+          <div class="progress-header">
+            <span class="progress-label ltr-only">Uploading to secure registry...</span>
+            <span class="progress-label rtl-only" style="font-family:var(--font-ar);">جارٍ الرفع إلى السجل الآمن...</span>
+            <span class="progress-pct" id="progress-pct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- Upload info box -->
+        <div class="glass-surface" style="margin-top:1.5rem; padding:1.25rem 1.5rem;">
+          <div style="display:flex; align-items:flex-start; gap:0.875rem;">
+            <div style="color:var(--c-green); flex-shrink:0; margin-top:2px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; font-weight:700; color:var(--c-green); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.375rem;" class="ltr-only">Secure & Encrypted</div>
+              <div style="font-size:0.75rem; font-weight:700; color:var(--c-green); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.375rem; font-family:var(--font-ar);" class="rtl-only">آمن ومشفّر</div>
+              <div style="font-size:0.8125rem; color:var(--c-muted); line-height:1.6;" class="ltr-only">All submissions are encrypted and stored on UAE government-certified infrastructure. Your data is protected under the UAE Personal Data Protection Law.</div>
+              <div style="font-size:0.8125rem; color:var(--c-muted); line-height:1.6; font-family:var(--font-ar);" class="rtl-only">جميع الطلبات مشفّرة ومخزّنة على بنية تحتية معتمدة من الحكومة الإماراتية. بياناتك محمية بموجب قانون حماية البيانات الشخصية الإماراتي.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     MISSION TIMELINE — Zig-Zag Heroes' Action Layout
+══════════════════════════════════════════════════════ -->
+<section id="mission" class="section" style="background:var(--c-surface);">
+  <div class="section-inner">
+    <div style="text-align:center; margin-bottom:4rem;">
+      <div class="section-tag gsap-fade-up" style="justify-content:center;">
+        <span class="ltr-only">Our National Mission</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">مهمتنا الوطنية</span>
+      </div>
+      <h2 class="section-title gsap-fade-up">
+        <span class="ltr-only">A Legacy Built<br>on Sacrifice</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">إرث بُنِي<br>على التضحية</span>
+      </h2>
+      <p class="section-desc gsap-fade-up" style="margin:0 auto; text-align:center;">
+        <span class="ltr-only">From the founding of our Union to the frontlines of 2026 — heroes who shaped a nation.</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">من تأسيس الاتحاد إلى خطوط الدفاع الأولى عام 2026 — أبطال صنعوا وطناً.</span>
+      </p>
+    </div>
+
+    <div class="timeline" id="timeline">
+
+      <!-- ─── ITEM 1 (odd → content LEFT) ─── -->
+      <div class="timeline-item gsap-fade-up">
+        <div class="tl-content-left">
+          <span class="tl-sector-chip green">
+            <!-- Lucide: flag icon -->
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            Heroes Unite
+          </span>
+          <div class="tl-year">1971</div>
+          <div class="tl-event-title ltr-only">Founding Heroes Build a Nation</div>
+          <div class="tl-event-title rtl-only" style="font-family:var(--font-ar);">أبطال التأسيس يبنون وطناً</div>
+          <div class="tl-event-desc ltr-only">Seven emirates unite under one flag. The first frontline heroes — engineers, medics, and civil servants — begin the monumental task of constructing a unified nation from the desert up, with extraordinary dedication and sacrifice.</div>
+          <div class="tl-event-desc rtl-only" style="font-family:var(--font-ar);">تتحد الإمارات السبع تحت علم واحد. يبدأ أوائل أبطال الصف الأول — مهندسون وأطباء وموظفون مدنيون — المهمة الجليلة في بناء دولة موحدة من الصفر بتضحية واستثنائية.</div>
+          <div class="tl-hero-action ltr-only">
+            <strong style="color:var(--c-green);">Hero's Action:</strong> Civil engineers, military personnel, and medical teams worked in concert, establishing the foundational infrastructure of the UAE's healthcare, defense, and emergency services.
+          </div>
+          <div class="tl-hero-action rtl-only" style="font-family:var(--font-ar); border-left:none; border-right:3px solid var(--c-green);">
+            <strong style="color:var(--c-green);">فعل البطل:</strong> عمل المهندسون والعسكريون والفرق الطبية معاً لإرساء البنية التحتية الأساسية لقطاعات الصحة والدفاع وخدمات الطوارئ في الإمارات.
+          </div>
+        </div>
+        <div class="tl-center">
+          <div class="tl-node"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-content-right"></div>
+      </div>
+
+      <!-- ─── ITEM 2 (even → content RIGHT) ─── -->
+      <div class="timeline-item gsap-fade-up">
+        <div class="tl-content-left"></div>
+        <div class="tl-center">
+          <div class="tl-node"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-content-right">
+          <span class="tl-sector-chip red" style="float:right;">
+            <!-- Lucide: users icon -->
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Volunteers Rise
+          </span>
+          <div style="clear:both;"></div>
+          <div class="tl-year">2008</div>
+          <div class="tl-event-title ltr-only">Volunteers Forge Community Bonds</div>
+          <div class="tl-event-title rtl-only" style="font-family:var(--font-ar);">المتطوعون يرسّخون الروابط المجتمعية</div>
+          <div class="tl-event-desc ltr-only">The UAE national volunteering framework launches, transforming everyday citizens into organized frontline supporters. Over 6,000 volunteers deploy across all seven emirates, turning compassion into structured national service.</div>
+          <div class="tl-event-desc rtl-only" style="font-family:var(--font-ar);">إطلاق الإطار الوطني للتطوع في الإمارات، ليحوّل المواطنين العاديين إلى داعمين منظمين في خط الدفاع الأول. ينتشر أكثر من 6000 متطوع في جميع الإمارات السبع.</div>
+          <div class="tl-hero-action" style="border-left:none; border-right:3px solid var(--c-red);">
+            <strong style="color:var(--c-red);">Hero's Action:</strong> Volunteer coordinators across all seven emirates mobilized rapid-response community networks, reaching thousands of families with food, medical aid, and social support within hours of any emergency.
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── ITEM 3 (odd → content LEFT) ─── -->
+      <div class="timeline-item gsap-fade-up">
+        <div class="tl-content-left">
+          <span class="tl-sector-chip green">
+            <!-- Lucide: cross icon (medical) -->
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 2h8v6h6v8h-6v6H8v-6H2v-8h6z"/></svg>
+            Medical Heroes
+          </span>
+          <div class="tl-year">2020</div>
+          <div class="tl-event-title ltr-only">Healthcare Heroes Defy the Pandemic</div>
+          <div class="tl-event-title rtl-only" style="font-family:var(--font-ar);">أبطال الرعاية الصحية يتحدون الجائحة</div>
+          <div class="tl-event-desc ltr-only">UAE frontline healthcare workers demonstrate unparalleled bravery during COVID-19. Doctors, nurses, and paramedics worked 24/7 shifts, enabling one of the world's fastest vaccination campaigns and protecting millions of lives.</div>
+          <div class="tl-event-desc rtl-only" style="font-family:var(--font-ar);">يُظهر عمال الرعاية الصحية في الصف الأول شجاعة لا مثيل لها خلال كوفيد-19. عمل الأطباء والممرضون والمسعفون في نوبات على مدار الساعة، محققين من أسرع حملات التطعيم عالميًا.</div>
+          <div class="tl-hero-action ltr-only">
+            <strong style="color:var(--c-green);">Hero's Action:</strong> Medical teams converted entire stadiums into field hospitals. Civil Defense units enforced safety protocols nationwide. Volunteers distributed 12 million+ relief packages. Together, the UAE achieved a 99% vaccination rate within six months.
+          </div>
+        </div>
+        <div class="tl-center">
+          <div class="tl-node"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-content-right"></div>
+      </div>
+
+      <!-- ─── ITEM 4 (even → content RIGHT) ─── -->
+      <div class="timeline-item gsap-fade-up">
+        <div class="tl-content-left"></div>
+        <div class="tl-center">
+          <div class="tl-node"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-content-right">
+          <span class="tl-sector-chip red" style="float:right;">
+            <!-- Lucide: globe icon -->
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            National Portal
+          </span>
+          <div style="clear:both;"></div>
+          <div class="tl-year">2025</div>
+          <div class="tl-event-title ltr-only">Pulse of The Nation Portal Launches</div>
+          <div class="tl-event-title rtl-only" style="font-family:var(--font-ar);">إطلاق بوابة نبض الهوية</div>
+          <div class="tl-event-desc ltr-only">The UAE's Frontline Heroes Office (FHO) inaugurates a first-of-its-kind national identity portal — cataloguing, honouring, and preserving the verified stories of every UAE frontline hero for generations to come.</div>
+          <div class="tl-event-desc rtl-only" style="font-family:var(--font-ar);">تُدشّن مكتب أبطال الصف الأول الإماراتي بوابة هوية وطنية فريدة من نوعها لتوثيق وتكريم والحفاظ على قصص كل أبطال الصف الأول للأجيال القادمة.</div>
+          <div class="tl-hero-action" style="border-left:none; border-right:3px solid var(--c-red);">
+            <strong style="color:var(--c-red);">Hero's Action:</strong> Over 12,000 stories submitted within the first 30 days. The FHO registry became the official national archive for frontline service records, recognizing heroes across all seven emirates and 48,000+ registered personnel.
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── ITEM 5 (odd → content LEFT) — MARCH 2026 NEW ENTRY ─── -->
+      <div class="timeline-item gsap-fade-up">
+        <div class="tl-content-left">
+          <span class="tl-march2026-badge">
+            <!-- Lucide: shield icon -->
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            New Milestone · March 2026
+          </span>
+          <div class="tl-year">2026</div>
+          <div class="tl-event-title ltr-only">Regional Humanitarian Sanctuary &amp; Response</div>
+          <div class="tl-event-title rtl-only" style="font-family:var(--font-ar);">الملاذ الإنساني الإقليمي والاستجابة</div>
+          <div class="tl-event-desc ltr-only">As regional instability intensified across the broader Middle East in early 2026, the UAE's Frontline Heroes Office activated its full inter-agency emergency mobilisation protocol — deploying a historic multi-sector response.</div>
+          <div class="tl-event-desc rtl-only" style="font-family:var(--font-ar);">مع تصاعد عدم الاستقرار الإقليمي في مطلع عام 2026، فعّل مكتب أبطال الصف الأول بروتوكول الاستجابة الطارئة متعدد الجهات لنشر استجابة تاريخية متعددة القطاعات.</div>
+
+          <!-- Sub-items: three pillars of the March 2026 response -->
+          <div style="margin-top:1rem; display:flex; flex-direction:column; gap:0.75rem;">
+
+            <div style="display:flex; align-items:flex-start; gap:0.75rem; background:#fff; border:1px solid rgba(0,151,57,0.15); border-radius:12px; padding:0.875rem 1rem;">
+              <!-- Lucide: plane (Air-Bridge) — UAE Green -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#009739" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-1 0-1.5.5-3.5 1.5L8 12l-3.8-1.2a1 1 0 0 0-1 .2L1.1 13l4.9 2 2 4.9 2.1-2.1a1 1 0 0 0 .2-1L9 13l7-7c1-2 1.5-2 1.5-3 0-2-2-2-3.5-.5L10 6 1.8 9.2"/></svg>
+              <div>
+                <div style="font-size:0.75rem; font-weight:700; color:var(--c-green); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.25rem;">Logistical Air-Bridge</div>
+                <div style="font-size:0.8125rem; color:var(--c-muted); line-height:1.55;" class="ltr-only">The FHO orchestrated a rapid air-bridge deploying 240+ tonnes of medical supplies, portable field hospitals, and emergency pharmaceuticals — operational within 72 hours of the regional alert.</div>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:flex-start; gap:0.75rem; background:#fff; border:1px solid rgba(239,51,64,0.14); border-radius:12px; padding:0.875rem 1rem;">
+              <!-- Lucide: shield-check (Guardian) — UAE Red -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF3340" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              <div>
+                <div style="font-size:0.75rem; font-weight:700; color:var(--c-red); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.25rem;">Guardian Efforts — 24/7 Borders &amp; Ports</div>
+                <div style="font-size:0.8125rem; color:var(--c-muted); line-height:1.55;" class="ltr-only">Healthcare personnel, Civil Defense units, and trained volunteers maintained round-the-clock watch at all UAE land borders, seaports, and airports — providing immediate medical triage and safe transit to those affected.</div>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:flex-start; gap:0.75rem; background:#fff; border:1px solid rgba(0,151,57,0.15); border-radius:12px; padding:0.875rem 1rem;">
+              <!-- Lucide: activity (Pulse of Safety) — UAE Green -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#009739" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <div>
+                <div style="font-size:0.75rem; font-weight:700; color:var(--c-green); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.25rem;">"Pulse of Safety" Initiative</div>
+                <div style="font-size:0.8125rem; color:var(--c-muted); line-height:1.55;" class="ltr-only">A specialized FHO mission deploying epidemiologists, infectious disease specialists, and WHO-certified field teams to actively neutralize regional health risks — protecting both UAE residents and those seeking humanitarian refuge.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="tl-center">
+          <div class="tl-node"></div>
+          <!-- No line after last item -->
+        </div>
+        <div class="tl-content-right"></div>
+      </div>
+
+    </div><!-- /timeline -->
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo-mark" aria-hidden="true">ن</div>
+      <div>
+        <div style="font-size:0.875rem; font-weight:700; color:var(--c-black);">
+          <span class="ltr-only">Pulse of The Nation</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">نبض الهوية</span>
+        </div>
+        <div class="footer-copy" style="margin-top:0.25rem;">
+          <span class="ltr-only">© 2026 UAE National Identity Initiative. All rights reserved.</span>
+          <span class="rtl-only" style="font-family:var(--font-ar);">© 2026 مبادرة الهوية الوطنية الإماراتية. جميع الحقوق محفوظة.</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-uae">
+      <div class="uae-ribbon">
+        <div class="ribbon-seg" style="width:20px;background:#009739;height:3px;border-radius:100px;"></div>
+        <div class="ribbon-seg" style="width:20px;background:#000;height:3px;border-radius:100px;"></div>
+        <div class="ribbon-seg" style="width:20px;background:#fff;height:3px;border-radius:100px;border:1px solid rgba(0,0,0,0.1);"></div>
+        <div class="ribbon-seg" style="width:6px;background:#EF3340;height:3px;border-radius:100px;"></div>
+      </div>
+      <span style="margin-left:0.625rem;">
+        <span class="ltr-only">United Arab Emirates · الإمارات العربية المتحدة</span>
+        <span class="rtl-only" style="font-family:var(--font-ar);">الإمارات العربية المتحدة</span>
+      </span>
+    </div>
+    <div class="footer-links">
+      <a href="#" class="footer-link ltr-only">Privacy</a>
+      <a href="#" class="footer-link rtl-only" style="font-family:var(--font-ar);">الخصوصية</a>
+      <a href="#" class="footer-link ltr-only">Terms</a>
+      <a href="#" class="footer-link rtl-only" style="font-family:var(--font-ar);">الشروط</a>
+      <a href="#" class="footer-link ltr-only">Accessibility</a>
+      <a href="#" class="footer-link rtl-only" style="font-family:var(--font-ar);">إمكانية الوصول</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────────────
+   1. CONSTELLATION CANVAS — UAE Green & Red particles
+───────────────────────────────────────────── */
+(function() {
+  const canvas = document.getElementById('constellation-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, stars = [], RAF;
+
+  const STAR_COUNT     = 70;
+  const CONNECTION_DIST = 120;
+
+  // Alternate between UAE Green and UAE Red particles
+  const COLORS = [
+    { r: 0,   g: 151, b: 57  },  // UAE Green
+    { r: 239, g: 51,  b: 64  },  // UAE Red
+  ];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < STAR_COUNT; i++) {
+      const c = COLORS[i % 2];
+      stars.push({
+        x:  Math.random() * W,
+        y:  Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: (Math.random() - 0.5) * 0.14,
+        r:  Math.random() * 1.4 + 0.4,
+        a:  Math.random() * 0.5 + 0.15,
+        r_: c.r, g_: c.g, b_: c.b,
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    for (const s of stars) {
+      s.x += s.vx; s.y += s.vy;
+      if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+      if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+    }
+
+    // Connections
+    for (let i = 0; i < stars.length; i++) {
+      for (let j = i + 1; j < stars.length; j++) {
+        const dx   = stars[i].x - stars[j].x;
+        const dy   = stars[i].y - stars[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < CONNECTION_DIST) {
+          const alpha = (1 - dist / CONNECTION_DIST) * 0.15;
+          ctx.strokeStyle = `rgba(0,151,57,${alpha})`;
+          ctx.lineWidth   = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(stars[i].x, stars[i].y);
+          ctx.lineTo(stars[j].x, stars[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Stars
+    for (const s of stars) {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${s.r_},${s.g_},${s.b_},${s.a})`;
+      ctx.fill();
+    }
+
+    RAF = requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); initStars(); });
+  resize(); initStars(); draw();
+})();
+
+/* ─────────────────────────────────────────────
+   2. GSAP ANIMATIONS
+───────────────────────────────────────────── */
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero entrance sequence
+const heroTL = gsap.timeline({ delay: 0.3 });
+heroTL
+  .to('#hero-tag',      { opacity: 1, duration: 0.8, ease: 'power2.out' })
+  .to('#h1-line1',      { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.3')
+  .to('#h1-line2',      { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.6')
+  .to('#hero-subtitle', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.5')
+  .to('#hero-desc',     { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.6')
+  .to('#hero-ctas',     { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.5')
+  .to('#hero-ribbon',   { opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.3');
+
+// Generic scroll-triggered fade-ups
+gsap.utils.toArray('.gsap-fade-up').forEach((el) => {
+  if (el.id && (el.id.startsWith('h1') || el.id === 'hero-subtitle' ||
+      el.id === 'hero-desc' || el.id === 'hero-ctas')) return;
+  gsap.fromTo(el,
+    { opacity: 0, y: 40 },
+    {
+      opacity: 1, y: 0, duration: 0.85,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' }
+    }
+  );
+});
+
+gsap.utils.toArray('.gsap-fade-in').forEach(el => {
+  if (el.id === 'hero-tag' || el.id === 'hero-ribbon') return;
+  gsap.fromTo(el,
+    { opacity: 0 },
+    { opacity: 1, duration: 0.9, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 90%' } }
+  );
+});
+
+gsap.utils.toArray('.gsap-slide-left').forEach(el => {
+  gsap.fromTo(el,
+    { opacity: 0, x: -50 },
+    { opacity: 1, x: 0, duration: 0.9, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 85%' } }
+  );
+});
+
+gsap.utils.toArray('.gsap-slide-right').forEach(el => {
+  gsap.fromTo(el,
+    { opacity: 0, x: 50 },
+    { opacity: 1, x: 0, duration: 0.9, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 85%' } }
+  );
+});
+
+// Stats grid stagger
+gsap.utils.toArray('#stats-grid .stat-card').forEach((card, i) => {
+  gsap.fromTo(card,
+    { opacity: 0, y: 30 },
+    { opacity: 1, y: 0, duration: 0.7, delay: i * 0.12,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '#stats-grid', start: 'top 82%' } }
+  );
+});
+
+// Impact cards stagger
+gsap.utils.toArray('#impact-grid .impact-card').forEach((card, i) => {
+  gsap.fromTo(card,
+    { opacity: 0, y: 40 },
+    { opacity: 1, y: 0, duration: 0.75, delay: i * 0.16,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: '#impact-grid', start: 'top 80%' } }
+  );
+});
+
+/* ─────────────────────────────────────────────
+   3. TIMELINE — UAE Pulse Line Scroll Animation
+   Alternating Red/Green line grows as hero scrolls
+───────────────────────────────────────────── */
+document.querySelectorAll('.timeline-item').forEach((item, i) => {
+  const line = item.querySelector('.tl-line');
+  const node = item.querySelector('.tl-node');
+
+  // Animate the pulse line growing downward on scroll
+  if (line) {
+    ScrollTrigger.create({
+      trigger: item,
+      start: 'top 78%',
+      onEnter: () => {
+        line.classList.add('animated');
+        if (node) node.classList.add('pulse-active');
+      },
+      onLeaveBack: () => {
+        line.classList.remove('animated');
+        if (node) node.classList.remove('pulse-active');
+      }
+    });
+  }
+
+  // Animate the node itself with a bounce
+  if (node) {
+    gsap.fromTo(node,
+      { scale: 0 },
+      {
+        scale: 1, duration: 0.5, ease: 'back.out(2)',
+        scrollTrigger: { trigger: item, start: 'top 82%' }
+      }
+    );
+  }
+});
+
+/* ─────────────────────────────────────────────
+   4. ANIMATED COUNTERS
+───────────────────────────────────────────── */
+function formatNumber(n) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1_000)     return Math.round(n).toLocaleString();
+  return n.toString();
+}
+
+const counters = document.querySelectorAll('.counter-val');
+counters.forEach(counter => {
+  const target = parseInt(counter.dataset.target, 10);
+  const suffix = counter.dataset.suffix || '';
+  let started  = false;
+
+  ScrollTrigger.create({
+    trigger: counter,
+    start: 'top 85%',
+    onEnter: () => {
+      if (started) return;
+      started = true;
+      const duration = 2200;
+      const start_   = performance.now();
+      const tick = (now) => {
+        const elapsed = Math.min((now - start_) / duration, 1);
+        const ease    = 1 - Math.pow(1 - elapsed, 3);
+        const current = Math.round(ease * target);
+        counter.textContent = formatNumber(current) + suffix;
+        if (elapsed < 1) requestAnimationFrame(tick);
+        else counter.textContent = formatNumber(target) + suffix;
+      };
+      requestAnimationFrame(tick);
+    }
+  });
+});
+
+/* ─────────────────────────────────────────────
+   5. NAVBAR SCROLL — White Glassmorphism
+───────────────────────────────────────────── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+/* ─────────────────────────────────────────────
+   6. LANGUAGE TOGGLE (EN ↔ AR / LTR ↔ RTL)
+───────────────────────────────────────────── */
+const htmlEl  = document.getElementById('html-root');
+const langBtn = document.getElementById('lang-toggle');
+
+langBtn.addEventListener('click', () => {
+  const isRTL = htmlEl.getAttribute('dir') === 'rtl';
+  htmlEl.setAttribute('dir', isRTL ? 'ltr' : 'rtl');
+  htmlEl.setAttribute('lang', isRTL ? 'en' : 'ar');
+  gsap.fromTo(document.body, { opacity: 0.7 }, { opacity: 1, duration: 0.4 });
+});
+
+/* ─────────────────────────────────────────────
+   7. MOBILE HAMBURGER
+───────────────────────────────────────────── */
+const hamburger  = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+});
+mobileMenu.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => mobileMenu.classList.remove('open'));
+});
+
+/* ─────────────────────────────────────────────
+   8. DRAG & DROP UPLOAD SYSTEM
+───────────────────────────────────────────── */
+const dropZone    = document.getElementById('drop-zone');
+const fileInput   = document.getElementById('file-input');
+const fileList    = document.getElementById('file-list');
+const progressWrap= document.getElementById('progress-wrap');
+const progressFill= document.getElementById('progress-fill');
+const progressPct = document.getElementById('progress-pct');
+let uploadedFiles = [];
+
+const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
+const MAX_SIZE_MB   = 10;
+
+function formatFileSize(bytes) {
+  if (bytes < 1024)        return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function getFileIcon(type) {
+  if (type === 'application/pdf') {
+    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+  }
+  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+}
+
+function renderFiles() {
+  fileList.innerHTML = '';
+  uploadedFiles.forEach((f, i) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `
+      <div class="file-item-icon">${getFileIcon(f.type)}</div>
+      <div class="file-item-info">
+        <div class="file-item-name">${f.name}</div>
+        <div class="file-item-size">${formatFileSize(f.size)}</div>
+      </div>
+      <button class="file-remove" data-idx="${i}" aria-label="Remove ${f.name}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    `;
+    fileList.appendChild(item);
+    gsap.fromTo(item, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' });
+  });
+  fileList.querySelectorAll('.file-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx, 10);
+      uploadedFiles.splice(idx, 1);
+      renderFiles();
+    });
+  });
+}
+
+function validateAndAddFiles(files) {
+  for (const file of files) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      alert(`"${file.name}" is not a supported format. Please upload PDF, JPG, or PNG.`);
+      continue;
+    }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      alert(`"${file.name}" exceeds the 10MB limit.`);
+      continue;
+    }
+    if (!uploadedFiles.find(f => f.name === file.name && f.size === file.size)) {
+      uploadedFiles.push(file);
+    }
+  }
+  renderFiles();
+}
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
+fileInput.addEventListener('change', (e) => validateAndAddFiles(e.target.files));
+
+['dragenter', 'dragover'].forEach(evt => {
+  dropZone.addEventListener(evt, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+});
+['dragleave', 'drop'].forEach(evt => {
+  dropZone.addEventListener(evt, (e) => {
+    e.preventDefault(); dropZone.classList.remove('dragover');
+    if (evt === 'drop') validateAndAddFiles(e.dataTransfer.files);
+  });
+});
+
+/* ─────────────────────────────────────────────
+   9. SIMULATED UPLOAD PROGRESS + SUCCESS SEAL
+───────────────────────────────────────────── */
+const submitBtn      = document.getElementById('submit-btn');
+const successOverlay = document.getElementById('success-overlay');
+const closeSuccess   = document.getElementById('close-success');
+
+function simulateUpload() {
+  progressWrap.classList.add('visible');
+  let pct = 0;
+  const interval = setInterval(() => {
+    pct = Math.min(pct + Math.random() * 6 + 1, 100);
+    progressFill.style.width = pct + '%';
+    progressPct.textContent  = Math.round(pct) + '%';
+    if (pct >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        progressWrap.classList.remove('visible');
+        progressFill.style.width = '0%';
+        progressPct.textContent  = '0%';
+        showSuccess();
+      }, 500);
+    }
+  }, 60);
+}
+
+function showSuccess() {
+  successOverlay.classList.add('active');
+  gsap.fromTo('#seal-ring',
+    { scale: 0, rotation: -30 },
+    { scale: 1, rotation: 0, duration: 0.7, ease: 'back.out(1.6)' }
+  );
+  gsap.fromTo('.success-modal',
+    { scale: 0.85, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.5, ease: 'power3.out' }
+  );
+}
+
+submitBtn.addEventListener('click', () => {
+  const name    = document.getElementById('form-name').value.trim();
+  const sector  = document.getElementById('form-sector').value;
+  const emirate = document.getElementById('form-emirate').value;
+
+  if (!name || !sector || !emirate) {
+    gsap.fromTo(submitBtn,
+      { x: -8 }, { x: 0, duration: 0.4, ease: 'elastic.out(1, 0.3)', repeat: 2, yoyo: true }
+    );
+    return;
+  }
+  submitBtn.disabled = true;
+  submitBtn.style.opacity = '0.7';
+  simulateUpload();
+  setTimeout(() => {
+    document.getElementById('form-name').value    = '';
+    document.getElementById('form-id').value      = '';
+    document.getElementById('form-sector').value  = '';
+    document.getElementById('form-emirate').value = '';
+    document.getElementById('form-story').value   = '';
+    uploadedFiles = []; renderFiles();
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '1';
+  }, 4000);
+});
+
+closeSuccess.addEventListener('click', () => {
+  gsap.to('.success-modal', { scale: 0.9, opacity: 0, duration: 0.3, ease: 'power2.in' });
+  gsap.to(successOverlay,   { opacity: 0, duration: 0.4, ease: 'power2.in',
+    onComplete: () => successOverlay.classList.remove('active')
+  });
+});
+successOverlay.addEventListener('click', (e) => {
+  if (e.target === successOverlay) closeSuccess.click();
+});
+
+/* ─────────────────────────────────────────────
+   10. IMPACT CARD TILT MICRO-INTERACTION
+───────────────────────────────────────────── */
+document.querySelectorAll('.impact-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const cx   = rect.left + rect.width  / 2;
+    const cy   = rect.top  + rect.height / 2;
+    const dx   = (e.clientX - cx) / (rect.width  / 2);
+    const dy   = (e.clientY - cy) / (rect.height / 2);
+    gsap.to(card, { rotateY: dx * 5, rotateX: -dy * 5, duration: 0.4, ease: 'power2.out', transformPerspective: 1000 });
+  });
+  card.addEventListener('mouseleave', () => {
+    gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.5, ease: 'power2.out' });
+  });
+});
+
+/* ─────────────────────────────────────────────
+   11. SCROLL PROGRESS — UAE Green → Red gradient bar
+───────────────────────────────────────────── */
+const progressBar = document.createElement('div');
+progressBar.style.cssText = `
+  position:fixed; top:0; left:0; z-index:200;
+  height:3px; width:0%;
+  background:linear-gradient(90deg, #009739, #00C04B, #EF3340);
+  transition: width 0.05s linear;
+  box-shadow: 0 0 8px rgba(0,151,57,0.4);
+  pointer-events:none;
+`;
+document.body.appendChild(progressBar);
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docH      = document.documentElement.scrollHeight - window.innerHeight;
+  const pct       = docH > 0 ? (scrollTop / docH) * 100 : 0;
+  progressBar.style.width = pct + '%';
+}, { passive: true });
+
+</script>
+
+</body>
+</html>
